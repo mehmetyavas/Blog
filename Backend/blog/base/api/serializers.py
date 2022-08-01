@@ -29,6 +29,20 @@ class BlogSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+    def validate(self, data):
+        if data['baslik'] == data['aciklama']:
+            raise serializers.ValidationError(
+                'baslık ve acıklama alanları aynı olamaz!'
+            )
+        return data
+
+    def validate_baslik(self, value):
+        if len(value) < 20:
+            raise serializers.ValidationError(
+                f'baslık minimum 20 karakter olmalı!, siz {len(value)} karakter girdiniz'
+            )
+        return value
+
 
 
 
