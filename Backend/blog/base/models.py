@@ -1,10 +1,12 @@
 from django.db import models
 
 # Create your models here.
-
+class Blogger(models.Model):
+    isim=models.CharField(max_length=122)
+    soyIsim=models.CharField(max_length=122)
 
 class Blog(models.Model):
-    yazar = models.CharField(max_length=150)
+    yazar = models.ForeignKey(Blogger, on_delete=models.CASCADE)
     baslik = models.CharField(max_length=150)
     aciklama = models.CharField(max_length=150)
     metin = models.TextField(max_length=150)
