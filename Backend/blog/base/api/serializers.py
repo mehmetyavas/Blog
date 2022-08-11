@@ -14,12 +14,6 @@ from django.utils.timesince import timesince
 
 class BlogSerializer(serializers.ModelSerializer):
     time_since_pub = serializers.SerializerMethodField()
-    # yazar = serializers.StringRelatedField()
-    # yazar = BloggerSerializer()
-
-
-class BlogSerializer(serializers.ModelSerializer):
-    time_since_pub = serializers.SerializerMethodField()
     blogger = serializers.StringRelatedField()
 
 
