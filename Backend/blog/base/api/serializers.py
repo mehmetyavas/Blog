@@ -1,7 +1,32 @@
 from rest_framework import  serializers
 from base.models import Blog
 
-class BlogSerializer(serializers.Serializer):
+
+class BlogSerializer(serializers.ModelSerializer):
+    time_since_pub = serializers.SerializerMethodField()
+    class Meta:
+        model = Blog
+        fields = '__all__'
+        # fields = [
+        #     'yazar',
+        #     'baslik',
+        #     'metin'
+        # ]
+        read_only_fields = [
+            'id',
+            'yayinlanma_tarihi',
+            'guncelleme_tarihi'
+        ]
+    def get_time_since_pub(self, object):
+
+            return 'deneme'
+
+
+
+
+## Standart SERIALIZER
+
+class BlogDefaultSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     yazar = serializers.CharField()
     baslik = serializers.CharField()
@@ -42,6 +67,7 @@ class BlogSerializer(serializers.Serializer):
                 f'baslık minimum 20 karakter olmalı!, siz {len(value)} karakter girdiniz'
             )
         return value
+
 
 
 
