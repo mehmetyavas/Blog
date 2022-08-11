@@ -1,12 +1,27 @@
 from rest_framework import  serializers
+
+from base.models import Blog, Bloger
+
 from base.models import Blog
+
 from datetime import datetime, date
 from django.utils.timesince import timesince
+
+
+
+
+
+
+class BlogSerializer(serializers.ModelSerializer):
+    time_since_pub = serializers.SerializerMethodField()
+    # yazar = serializers.StringRelatedField()
+    # yazar = BloggerSerializer()
 
 
 class BlogSerializer(serializers.ModelSerializer):
     time_since_pub = serializers.SerializerMethodField()
     blogger = serializers.StringRelatedField()
+
 
     class Meta:
         model = Blog
@@ -32,6 +47,31 @@ class BlogSerializer(serializers.ModelSerializer):
         if value > today:
             raise serializers.ValidationError('yayınlanma tarihi ileri bir tarih olamaz')
         return value
+
+
+
+class BlogerSerializer(serializers.ModelSerializer):
+
+    # blog = BlogSerializer(many=True,read_only=True)#RELATED
+
+    blog = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='blog-detay'
+    )
+    class Meta:
+        model = Bloger
+        fields = '__all__'
+
+
+
+
+
+
+
+
+
+
 
 
 ## Standart SERIALIZER
