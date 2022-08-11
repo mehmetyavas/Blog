@@ -1,7 +1,71 @@
 from rest_framework import  serializers
-from base.models import Blog
+from base.models import Blog, Bloger
+from datetime import datetime, date
+from django.utils.timesince import timesince
 
-class BlogSerializer(serializers.Serializer):
+
+
+
+
+class BlogSerializer(serializers.ModelSerializer):
+    time_since_pub = serializers.SerializerMethodField()
+    # yazar = serializers.StringRelatedField()
+    # yazar = BloggerSerializer()
+
+
+    class Meta:
+        model = Blog
+        fields = '__all__'
+        # fields = [
+        #     'yazar',
+        #     'baslik',
+        #     'metin'
+        # ]
+
+    def get_time_since_pub(self, object):
+
+        now =datetime.now()
+        pub_date = object.yayinlanma_tarihi
+        if object.aktif == True:
+
+            time_delta = timesince(pub_date, now)
+            return time_delta
+        else:
+            return 'aktif değil'
+    def validate_yayinlanma_tarihi(self,value):
+        today = date.today()
+        if value > today:
+            raise serializers.ValidationError('yayınlanma tarihi ileri bir tarih olamaz')
+        return value
+
+
+class BlogerSerializer(serializers.ModelSerializer):
+
+    # blog = BlogSerializer(many=True,read_only=True)#RELATED
+
+    blog = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='blog-detay'
+    )
+    class Meta:
+        model = Bloger
+        fields = '__all__'
+
+
+
+
+
+
+
+
+
+
+
+
+## Standart SERIALIZER
+
+class BlogDefaultSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     yazar = serializers.CharField()
     baslik = serializers.CharField()
@@ -42,6 +106,7 @@ class BlogSerializer(serializers.Serializer):
                 f'baslık minimum 20 karakter olmalı!, siz {len(value)} karakter girdiniz'
             )
         return value
+
 
 
 

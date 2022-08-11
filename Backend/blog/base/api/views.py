@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from base.models import Blog
-from base.api.serializers import BlogSerializer
+from base.models import Blog, Bloger
+from base.api.serializers import BlogSerializer, BlogerSerializer
 
 #CLASS VIEWS
 from rest_framework.views import APIView
@@ -20,6 +20,22 @@ class BlogListCreateAPIView(APIView):
 
     def post(self, request):
         serializer = BlogSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BlogerListCreateAPIView(APIView):
+
+    def get(self, request):
+        yazarlar = Bloger.objects.all()
+        serializer = BlogerSerializer(yazarlar, many=True,context={'request': request})
+        return Response(serializer.data)
+
+
+    def post(self, request):
+        serializer = BlogerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
