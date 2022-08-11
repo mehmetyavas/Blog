@@ -1,9 +1,13 @@
 from rest_framework import  serializers
 from base.models import Blog
+from datetime import datetime, date
+from django.utils.timesince import timesince
 
 
 class BlogSerializer(serializers.ModelSerializer):
     time_since_pub = serializers.SerializerMethodField()
+    blogger = serializers.StringRelatedField()
+
     class Meta:
         model = Blog
         fields = '__all__'
@@ -12,16 +16,22 @@ class BlogSerializer(serializers.ModelSerializer):
         #     'baslik',
         #     'metin'
         # ]
-        read_only_fields = [
-            'id',
-            'yayinlanma_tarihi',
-            'guncelleme_tarihi'
-        ]
+
     def get_time_since_pub(self, object):
 
-            return 'deneme'
+        now =datetime.now()
+        pub_date = object.yayinlanma_tarihi
+        if object.aktif == True:
 
-
+            time_delta = timesince(pub_date, now)
+            return time_delta
+        else:
+            return 'aktif değil'
+    def validate_yayinlanma_tarihi(self,value):
+        today = date.today()
+        if value > today:
+            raise serializers.ValidationError('yayınlanma tarihi ileri bir tarih olamaz')
+        return value
 
 
 ## Standart SERIALIZER
